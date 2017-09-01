@@ -22,7 +22,7 @@ function changelog_template( $template ) {
     
   if ( is_post_type_archive('changelog') ) {
 
-    $theme_files = array('archive-changelog.php', 'archive-changelog.php');
+    $theme_files = array('archive-changelog.php');
     $exists_in_theme = locate_template($theme_files, false);
 
     if ( $exists_in_theme != '' ) {
@@ -128,52 +128,51 @@ add_action('init','changelog_categories');
 
 /*-----------------------Custom post - Settings------------------------*/
 
-add_action( 'admin_menu' , 'register_changelog_menu' );
+
+
+function register_changelog_settings() {
+    register_setting("section", "changelog-checkbox");
+    add_settings_Section("section", "Page Templates", null, "changelog");
+    add_settings_field("changelog-checkbox", "Use Inbuilt Single Page Template", "changelog_checkbox_display", "changelog", "section"); 
+}
+
+
+
+function changelog_checkbox_display()
+{
+   ?>
+<input type="checkbox" name="changelog-checkbox" value="1" <?php checked(1, get_option('changelog-checkbox'), true); ?> /> 
+   <?php
+}
+
+add_action( 'admin_init' , 'register_changelog_settings' );
+
+function form_submenu_page() {   
+?>
+ <div class="wrap">
+         <h1>Changelog settings</h1>
+  
+         <form method="post" action="options.php">
+            <?php
+               settings_fields("section");
+  
+               do_settings_sections("changelog");
+                 
+               submit_button(); 
+            ?>
+         </form>
+      </div>
+<?php
+}
 
 function register_changelog_menu() {
     
      add_submenu_page( 'edit.php?post_type=changelog','option Title', 'Settings', 'manage_options','sub_menu_slug', 'form_submenu_page' );
-    add_action( 'admin_init' , 'register_changelog_settings' );
+    
 }
 
-function form_submenu_page() {   
-?>
- <div>
-    <h2>Changelog Settings</h2>
-     <form method="post" action="options.php">
-    <?php settings_fields( 'changelog-options-group' ); ?>
+add_action( 'admin_menu' , 'register_changelog_menu' );
 
-      <?php do_settings_sections( 'changelog-options-group' ); ?>
-     
-     <?php 
-        $checked = "";
-        $check_over_archive = get_option('check_over_archive');
-        $checked = ( $check_over_archive ===false ) ? " checked='checked' " : ( ( $check_over_archive == 1 ) ? " checked='checked' " : "" );
-
-     ?>
-
-      <table class="changelog-table">
-         <tr>
-          <th><label for="check_over_archive">Inbuilt archive page template : </label></th>
-          <td><input type="checkbox" id="check_over_archive" <?php echo $checked; ?> name="check_over_archive" value="1" <?php checked( 1,  $checked, false); ?>" /></td>
-
-        </tr>
-        <tr>
-          <th><label for="doc_archive_title">Archive Page Title :  </label></th>
-          <td><input type="text" id="changelog_archive_title" name="doc_archive_title" value="<?php
-          echo esc_attr( get_option( 'doc_archive_title' ) ); ?>" /></td>
-        </tr>
-      </table>
-
-    <?php  submit_button(); ?>
-    </form>
-  </div>
-<?php
-}
-
-function register_changelog_settings() {
-    register_setting('changelog-options-group','doc_archive_title');
-}
 
 /*-------------shortcode to display posts categorywise----------------*/
 
@@ -210,3 +209,4 @@ function changelog_shortcode_callback( $atts ) {
         </div>
             <?php endwhile; 
 }
+
