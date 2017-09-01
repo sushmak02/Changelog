@@ -154,13 +154,13 @@ function form_submenu_page() {
 
       <table class="changelog-table">
          <tr>
-          <th><label for="check_over_archive">Override archive page template : </label></th>
+          <th><label for="check_over_archive">Inbuilt archive page template : </label></th>
           <td><input type="checkbox" id="check_over_archive" <?php echo $checked; ?> name="check_over_archive" value="1" <?php checked( 1,  $checked, false); ?>" /></td>
 
         </tr>
         <tr>
-          <th><label for="doc_archive_title">Doc Archive Page Title :  </label></th>
-          <td><input type="text" id="doc_archive_title" name="doc_archive_title" value="<?php
+          <th><label for="doc_archive_title">Archive Page Title :  </label></th>
+          <td><input type="text" id="changelog_archive_title" name="doc_archive_title" value="<?php
           echo esc_attr( get_option( 'doc_archive_title' ) ); ?>" /></td>
         </tr>
       </table>
@@ -180,18 +180,14 @@ function register_changelog_settings() {
 add_shortcode( 'changelog-shortcode', 'changelog_shortcode_callback' );
 
 function changelog_shortcode_callback( $atts ) {
-   
+
     $atts = shortcode_atts(
         array(
     'product' => '',
     'hide_empty' => false
     ),$atts, 'changelog-shortcode');
-
     $product_type= $atts['product'] ;
-
-    echo $product_type;
-
-
+ 
     $q = new WP_Query(array(
             'post_type' => 'changelog',
             'tax_query' => array(
@@ -199,8 +195,7 @@ function changelog_shortcode_callback( $atts ) {
                 'taxonomy' => 'product',
                 'field' => 'slug',
                 'terms' => array($product_type)
-            ))
-             
+            ))        
                 ));
             while ($q->have_posts() ) :
                 $q->the_post();
@@ -211,13 +206,7 @@ function changelog_shortcode_callback( $atts ) {
                     echo ' ';
                     the_time( get_option( 'date_format' ) );  ?>
                 </h3>
-                <?php the_content(); ?>
+                   <?php  the_content(); ?>
         </div>
-                    
-
-            <?php endwhile; ?>
-    </div>
-
-    <?php
-   
+            <?php endwhile; 
 }

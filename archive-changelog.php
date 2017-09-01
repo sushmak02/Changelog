@@ -14,7 +14,18 @@
 	}
 	get_header(); 
 	 ;/* Start the Loop */ ?>
-				
+		
+<?php
+
+    $terms = get_terms(array(
+        'taxonomy' => 'product',
+        'hide_empty' => false,
+        ));
+     $count_cat = count($terms);
+
+     if($count_cat < 1) {
+?>
+
 	<div class="changelog-content">
 		<?php
 			$q = new WP_Query(array(
@@ -33,4 +44,41 @@
 				</div>
 			<?php endwhile; ?>
 	</div>
-		
+<?php
+	} else {
+		global $count_post;
+		?> 
+		<?php
+		$myterms = get_terms(array(
+        'taxonomy' => 'product',
+        'hide_empty' => false,
+        ));
+		 foreach($myterms as $myterm) {
+		 	$cat_name = $myterm->name;
+		 	$cat_link = get_category_link($myterm);
+		 	$count_post = 0;
+		   		$q = new WP_Query(array(
+		            'post_type' => 'changelog',
+		            'tax_query' => array(
+		            array(
+		                'taxonomy' => 'product',
+		                'field' => 'slug',
+		                'terms' => array($myterm->slug)
+		            )) ));
+		   		while($q -> have_posts() ):
+		   			$q -> the_post();
+		   			$count_post = $count_post +1;
+		   		endwhile;
+		            ?>
+		        <div class="bsf-cat-content">
+				<div class="bsf-cat-col">
+				<h4>
+					<a href=<?php echo esc_url( $cat_link ); ?> >
+					<?php echo $cat_name; ?></a>
+				</h4>
+					<?php echo $count_post.' Articles'; ?>
+				</div>
+				</div>
+				<?php 
+			}
+	}	

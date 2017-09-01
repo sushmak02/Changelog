@@ -1,7 +1,7 @@
 <?php 
 
 
-echo('I am sushma');
+echo('I am single.php');
 
 
 
