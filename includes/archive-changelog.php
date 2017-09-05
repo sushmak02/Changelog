@@ -9,7 +9,7 @@
 	 */
 	function prefix_add_changelog_stylesheet() {
 	    // Respects SSL, Style.css is relative to the current file
-	    wp_register_style( 'prefix-style', plugins_url('style.css', __FILE__) );
+	    wp_register_style( 'prefix-style', plugins_url('../css/style.css', __FILE__) );
 	    wp_enqueue_style( 'prefix-style' );
 	}
 	get_header(); 
